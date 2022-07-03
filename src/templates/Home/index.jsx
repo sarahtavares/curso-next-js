@@ -11,7 +11,7 @@ export class Home extends Component {
     posts: [],
     allPosts: [],
     page: 0,
-    postsPerṔage: 5
+    postsPerPage: 10
   };
 
   async componentDidMount() {
@@ -19,11 +19,11 @@ export class Home extends Component {
   }
 
   loadPosts = async () => {
-    const { page, postsPerṔage } = this.state;
+    const { page, postsPerPage } = this.state;
     const postsAndPhotos = await loadPosts();
 
     this.setState({ 
-      posts: postsAndPhotos.slice(page, postsPerṔage),
+      posts: postsAndPhotos.slice(page, postsPerPage),
       allPosts: postsAndPhotos 
     });
   }
@@ -31,30 +31,31 @@ export class Home extends Component {
   loadMorePosts = () => {
     const {
       page,
-      postsPerṔage,
+      postsPerPage,
       allPosts,
       posts
     } = this.state;
 
-    const nextPage = page + postsPerṔage;
-    const nextPosts = allPosts.slice(nextPage, nextPage + postsPerṔage);
+    const nextPage = page + postsPerPage;
+    const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage);
     posts.push(...nextPosts);
 
     this.setState({posts, page: nextPage});
-    
-    console.log("Load more posts chamado");
   }
 
   render() {
-    const { posts } = this.state;
-
+    const { posts, page, postsPerPage, allPosts } = this.state;
+    const noMorePosts = page + postsPerPage >=  allPosts.length;
+    const text = noMorePosts ? "No more posts" : "Load more posts";
+    
     return (
       <section className="container">
         <Posts posts={posts} />
         <div class="button-container"></div>
         <Button 
-          text="Load more posts"
+          text={text}
           onClick={this.loadMorePosts}
+          disabled={noMorePosts}
         />
       </section>
     );
